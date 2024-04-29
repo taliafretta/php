@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
+<?php //include '../src/view/navbar.php';?>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">Ouvidoria Online</a>
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -41,25 +42,26 @@
 </div>
 
 <?php
-    include '../src/utils/db_connection.php';
-    $conn = OpenCon();
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $fullName = $_POST['fullName'];
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-        $birthdate = $_POST['birthdate'];
-        $phone = $_POST['phone'];
-        $whatsapp = $_POST['whatsapp'];
-        $state = $_POST['state'];
-        $city = $_POST['city'];
-        saveUser($fullName, $email, $password, $birthdate, $phone, $whatsapp, $state, $city);
-    }
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    include '../src/model/User.php';
 
-    CloseCon($conn);
+    $fullName = $_POST['fullName'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $birthdate = $_POST['birthdate'];
+    $phone = $_POST['phone'];
+    $whatsapp = $_POST['whatsapp'];
+    $state = $_POST['state'];
+    $city = $_POST['city'];
+    $user = new User(null, $fullName, $email, $password, $birthdate, $phone, $whatsapp, $state, $city);
+    $user->save();
+}
 ?>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
+<?php include '../src/view/footer.php'; ?>
 </html>

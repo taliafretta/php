@@ -10,6 +10,7 @@
 
 </head>
 <body>
+<?php include '../view/navbar.php'; ?>
 <div class="container">
     <h2>Cadastro</h2>
     <form id="signupForm" method="POST" action="../../public/index.php">
@@ -35,26 +36,19 @@
             <input type="date" class="form-control" id="birthdate" name="birthdate" required>
         </div>
 
-
-        <!-- Campo de Telefone -->
         <div class="form-group">
             <label for="phone">Telefone:</label>
             <input type="tel" class="form-control" id="phone" name="phone" required>
         </div>
 
-        <!-- Campo de WhatsApp -->
         <div class="form-group">
             <label for="whatsapp">WhatsApp:</label>
             <input type="tel" class="form-control" id="whatsapp" name="whatsapp" required>
         </div>
-
-        <!-- Ajuste nos campos de Estado e Cidade para Carregamento Dinâmico -->
         <div class="form-group">
             <label for="state">Estado:</label>
             <select id="state" class="form-control" name="state" required>
                 <option value="">Selecione um Estado</option>
-                <option value="">Santa Catarina</option>
-                <!-- Opções de estados serão carregadas aqui -->
             </select>
         </div>
 
@@ -62,8 +56,6 @@
             <label for="city">Cidade:</label>
             <select id="city" class="form-control" name="city" required>
                 <option value="">Selecione uma Cidade</option>
-                <option value="">Criciúma</option>
-                <!-- Opções de cidades serão carregadas aqui baseadas no Estado selecionado -->
             </select>
         </div>
 
@@ -73,79 +65,70 @@
 
 <script>
     // Validações de senha
-    $(document).ready(function() {
-        $("#signupForm").submit(function(event) {
-            // Prevent the form from submitting via the browser.
+    $(document).ready(function () {
+        $("#signupForm").submit(function (event) {
             event.preventDefault();
 
             var password = $("#password").val();
             var confirmPassword = $("#confirmPassword").val();
 
             // Verifique se as senhas coincidem
-            if(password !== confirmPassword) {
+            if (password !== confirmPassword) {
                 alert("As senhas não coincidem!");
-                return false; // Impede o envio do formulário
+                return false;
             }
-
-            // Outras validações podem ser adicionadas aqui
-
-            // Se tudo estiver correto, envie o formulário
             this.submit();
         });
     });
 
-    // Máscaras, validações e AJAX para carregar estados e cidades
     // Adicionada validação para verificar se o usuário tem mais de 18 anos
-    $('#birthdate').change(function(){
+    $('#birthdate').change(function () {
         var birthdate = new Date($(this).val());
         var ageDifMs = Date.now() - birthdate.getTime();
-        var ageDate = new Date(ageDifMs); // miliseconds from epoch
+        var ageDate = new Date(ageDifMs);
         var age = Math.abs(ageDate.getUTCFullYear() - 1970);
         if (age < 18) {
             alert("Você deve ter mais de 18 anos.");
-            $('#birthdate').val(''); // Limpa o campo
+            $('#birthdate').val('');
         }
     });
 
 
     // Máscara de telefones
-    $(document).ready(function(){
-        // Máscaras de telefone e WhatsApp
+    $(document).ready(function () {
         $('#phone, #whatsapp').mask('(00) 00000-0000');
-
-        // Restante do código de validação...
     });
 
     // Carregando estados
-    $(document).ready(function(){
+    $(document).ready(function () {
         $.ajax({
             url: 'https://servicodados.ibge.gov.br/api/v1/localidades/estados/',
             method: 'GET',
             dataType: 'json',
-            success: function(data) {
+            success: function (data) {
                 var select = $("#state");
-                select.empty(); // Limpar os estados existentes
-                select.append('<option value="">Selecione um Estado</option>'); // Opção padrão
-                $.each(data, function(i, state) {
+                select.empty();
+                select.append('<option value="">Selecione um Estado</option>');
+                $.each(data, function (i, state) {
                     select.append($('<option>').text(state.nome).attr('value', state.sigla));
                 });
             }
         });
     });
 
-    $("#state").change(function() {
+    $("#state").change(function () {
         var state = $(this).val();
         var citiesSelect = $("#city");
 
-        if(state) {
+        if (state) {
             $.ajax({
                 url: `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${state}/municipios`,
                 method: 'GET',
                 dataType: 'json',
-                success: function(data) {
-                    citiesSelect.empty(); // Limpar as cidades existentes
-                    citiesSelect.append('<option value="">Selecione uma Cidade</option>'); // Opção padrão
-                    $.each(data, function(i, city) {
+                success: function (data) {
+                    citiesSelect.empty();
+                    citiesSelect.append('<option value="">Selecione uma Cidade</option>');
+                    $.each(data, function (i, city) {
                         citiesSelect.append($('<option>').text(city.nome).attr('value', city.nome));
                     });
                 }
