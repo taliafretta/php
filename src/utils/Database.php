@@ -6,7 +6,7 @@ class Database
     private $servername = "localhost";
     private $username = "root";
     private $password = "root";
-    private $dbname = "database";
+    private $dbname = "ouvidoria";
 
     public function __construct()
     {
